@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNT Error Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EAEEF5; --surface: #FFFFFF; --surface-2: #F3F5FA;
+    --ink: #1B2340; --ink-soft: #56607F; --ink-faint: #8891AC; --line: #D7DCE9;
+    --accent: #2F5D8A; --accent-soft: #E4ECF5;
+    --correct: #2E7D4F; --correct-soft: #E4F3EA;
+    --wrong: #C1443C; --wrong-soft: #FBEAE8;
+    --gold: #A9791E; --gold-soft: #F6EED9;
+    --radius: 10px;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12162A; --surface: #1A2038; --surface-2: #202847;
+      --ink: #EBEEF8; --ink-soft: #AEB6D4; --ink-faint: #7A82A3; --line: #313A5E;
+      --accent: #6FA0D4; --accent-soft: #24304F;
+      --correct: #5FCB8B; --correct-soft: #1D3327;
+      --wrong: #F0847C; --wrong-soft: #3A2226;
+      --gold: #E0B75C; --gold-soft: #382D18;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12162A; --surface: #1A2038; --surface-2: #202847;
+    --ink: #EBEEF8; --ink-soft: #AEB6D4; --ink-faint: #7A82A3; --line: #313A5E;
+    --accent: #6FA0D4; --accent-soft: #24304F;
+    --correct: #5FCB8B; --correct-soft: #1D3327;
+    --wrong: #F0847C; --wrong-soft: #3A2226;
+    --gold: #E0B75C; --gold-soft: #382D18;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; min-height: 100vh; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; margin: 0 0 4px; color: var(--ink); }
+  a { color: var(--accent); }
+  button { font-family: var(--sans); cursor: pointer; }
+  input, textarea, select { font-family: var(--sans); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 60px; }
+  .wrap.narrow { max-width: 640px; }
+  .topbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand .mark { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--wrong); }
+  .brand .name { font-family: var(--serif); font-size: 20px; font-weight: 600; }
+  .nav-link { color: var(--ink-soft); text-decoration: none; font-size: 13.5px; border-bottom: 1px solid transparent; }
+  .nav-link:hover { border-color: var(--ink-soft); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .card + .card { margin-top: 18px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); padding: 9px 16px; font-size: 14px; font-weight: 500; line-height: 1.2; transition: background .12s ease, border-color .12s ease; }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { filter: brightness(1.06); }
+  .btn.danger { color: var(--wrong); }
+  .btn.danger:hover { background: var(--wrong-soft); border-color: var(--wrong); }
+  .btn.small { padding: 5px 10px; font-size: 12.5px; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  label { display: block; font-size: 12.5px; color: var(--ink-soft); margin: 0 0 5px; font-weight: 500; }
+  input[type=text], input[type=tel], textarea, select { width: 100%; padding: 9px 11px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 14.5px; }
+  input[type=text]:focus, input[type=tel]:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .field { margin-bottom: 14px; }
+  textarea.code { resize: vertical; font-family: var(--mono); font-size: 13px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 160px; }
+  .landing-hero { text-align: center; padding: 46px 10px 10px; }
+  .landing-hero h1 { font-size: 32px; }
+  .landing-hero p { color: var(--ink-soft); max-width: 460px; margin: 10px auto 0; }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px; }
+  @media (max-width: 620px) { .choice-grid { grid-template-columns: 1fr; } }
+  .choice { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; text-align: left; }
+  .choice .icon { font-size: 22px; }
+  .choice h3 { margin-top: 10px; font-size: 17px; }
+  .choice p { color: var(--ink-soft); font-size: 13.5px; margin: 4px 0 16px; }
+  .exam-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); border-left: 4px solid var(--wrong); padding: 26px; }
+  .q-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+  .q-count { font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); }
+  .q-topic { font-size: 12px; color: var(--accent); font-weight: 600; background: var(--accent-soft); padding: 2px 8px; border-radius: 5px; white-space: nowrap; }
+  .q-type-note { font-size: 11.5px; color: var(--ink-faint); margin-bottom: 8px; }
+  .q-text { font-size: 18px; line-height: 1.5; margin: 6px 0 20px; font-family: var(--serif); font-weight: 500; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); cursor: pointer; text-align: left; width: 100%; font-size: 14.5px; color: var(--ink); }
+  .option:hover { border-color: var(--accent); }
+  .option.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .option .letter { font-family: var(--mono); font-weight: 600; color: var(--ink-faint); flex-shrink: 0; }
+  .option.selected .letter { color: var(--accent); }
+  .dots { display: flex; flex-wrap: wrap; gap: 5px; margin: 18px 0; }
+  .dot { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--line); background: var(--surface-2); font-family: var(--mono); font-size: 10.5px; display: flex; align-items: center; justify-content: center; color: var(--ink-faint); }
+  .dot.answered { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .dot.current { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .quiz-actions { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+  .score-hero { text-align: center; padding: 26px 0 10px; }
+  .score-num { font-family: var(--serif); font-size: 56px; font-weight: 700; }
+  .score-pct { color: var(--ink-soft); font-size: 14px; }
+  .topic-bar-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+  .topic-bar-row .label { width: 190px; flex-shrink: 0; font-size: 13px; }
+  .topic-bar-track { flex: 1; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+  .topic-bar-fill { height: 100%; border-radius: 4px; }
+  .topic-bar-row .pct { width: 110px; text-align: right; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); flex-shrink: 0; }
+  .code-box { font-family: var(--mono); font-size: 12px; background: var(--surface-2); border: 1px dashed var(--line); border-radius: 8px; padding: 10px; word-break: break-all; max-height: 90px; overflow-y: auto; }
+  .dash { display: grid; grid-template-columns: 190px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 760px) { .dash { grid-template-columns: 1fr; } }
+  .side-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 20px; }
+  .side-nav button { text-align: left; background: transparent; border: none; padding: 9px 12px; border-radius: 7px; color: var(--ink-soft); font-size: 14px; }
+  .side-nav button.active { background: var(--surface); color: var(--ink); font-weight: 600; border: 1px solid var(--line); }
+  @media (max-width: 760px) { .side-nav { flex-direction: row; flex-wrap: wrap; position: static; } }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--ink-faint); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover td { background: var(--surface-2); }
+  .table-wrap { overflow-x: auto; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11.5px; font-weight: 600; font-family: var(--mono); }
+  .pill.good { background: var(--correct-soft); color: var(--correct); }
+  .pill.mid { background: var(--gold-soft); color: var(--gold); }
+  .pill.bad { background: var(--wrong-soft); color: var(--wrong); }
+  .q-list-item { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+  .q-list-item .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .q-list-item .txt { font-weight: 500; flex: 1; }
+  .q-list-item .tags { margin: 6px 0 0; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 2px 7px; border-radius: 5px; background: var(--surface-2); color: var(--ink-soft); }
+  .q-list-item .opts { margin-top: 8px; font-size: 13px; color: var(--ink-soft); }
+  .q-list-item .opts .ok { color: var(--correct); font-weight: 600; }
+  .empty-note { color: var(--ink-faint); font-size: 13.5px; padding: 18px 0; text-align: center; }
+  .section-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .section-head p.hint { color: var(--ink-faint); font-size: 12.5px; margin: 2px 0 0; }
+  .divider { height: 1px; background: var(--line); margin: 20px 0; border: none; }
+  .lock-screen { max-width: 360px; margin: 60px auto; text-align: center; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 13px; z-index: 50; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mb0{margin-bottom:0}
+  .muted { color: var(--ink-soft); }
+  .small { font-size: 12.5px; }
+  .subtle-h { text-transform: none; color: var(--ink-soft); font-size: 13px; letter-spacing: 0; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+  .stat-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  .stat-card .num { font-family: var(--serif); font-size: 26px; font-weight: 700; }
+  .stat-card .lbl { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+  .flag-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+  .flag-item:last-child { border-bottom: none; }
+  .flag-item .n { color: var(--wrong); font-weight: 600; }
+  .opt-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .opt-row input[type=checkbox], .opt-row input[type=radio] { width: auto; flex-shrink: 0; }
+  .test-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .test-item:last-child { border-bottom: none; }
+  .test-item .ti-left .t { font-weight: 600; }
+  .test-item .ti-left .m { font-size: 12.5px; color: var(--ink-faint); }
+  .back-link { font-size: 13px; color: var(--ink-soft); cursor: pointer; display: inline-block; margin-bottom: 12px; }
+  .back-link:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+  "use strict";
+
+  var UNT_TOPICS = ["Articles","Prepositions","Conjunctions","Word formation","Parts of speech",
+    "Synonyms / Antonyms","Collocations / lexical compatibility","Polysemantic words","Set expressions",
+    "Sentences","Constructions","Speech norms","Reading / text work"];
+
+  /* Question type registry — add new types here later without touching render/grade call sites. */
+  var QUESTION_TYPES = {
+    single: {
+      label: "Single choice",
+      grade: function(correct, chosen){ return chosen != null && chosen === correct; },
+      emptyAnswer: function(){ return null; }
+    },
+    multiple: {
+      label: "Multiple choice",
+      grade: function(correctArr, chosenArr){
+        var c = (correctArr||[]).slice().sort();
+        var a = (chosenArr||[]).slice().sort();
+        return c.length === a.length && c.every(function(v,i){ return v === a[i]; });
+      },
+      emptyAnswer: function(){ return []; }
+    }
+  };
+
+  /* ---------------- storage ---------------- */
+  var STORE_KEY = "untErrorBank_v2";
+  function loadState(){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch(e){}
+    return { tests: sampleTests(), results: [], pin: null, teacherContact: "", serverUrl: "" };
+  }
+  function saveState(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
+
+  function sampleTests(){
+    return [{
+      id: "demo1", title: "Demo test — mixed topics", createdAt: Date.now(),
+      questions: [
+        { id: "q1", topic: "Prepositions", errorType: "Grammar", type: "single",
+          text: "She is interested ___ music.", options: ["at","in","on","for"], correct: 1 },
+        { id: "q2", topic: "Articles", errorType: "Grammar", type: "single",
+          text: "___ Eiffel Tower is in Paris.", options: ["A","An","The","(no article)"], correct: 2 },
+        { id: "q3", topic: "Word formation", errorType: "Vocabulary", type: "single",
+          text: "The scientist's ___ (discover) changed the field.", options: ["discovery","discoverable","discovering","discoverment"], correct: 0 },
+        { id: "q4", topic: "Synonyms / Antonyms", errorType: "Vocabulary", type: "single",
+          text: "Choose the word closest in meaning to 'meticulous'.", options: ["Careless","Thorough","Hurried","Vague"], correct: 1 },
+        { id: "q5", topic: "Collocations / lexical compatibility", errorType: "Vocabulary", type: "single",
+          text: "He made a ___ decision without thinking it through.", options: ["fast","quick","hasty","rapid"], correct: 2 }
+      ]
+    }];
+  }
+
+  var state = loadState();
+
+  /* ---------------- helpers ---------------- */
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function escapeHtml(str){
+    return String(str == null ? "" : str).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  function letters(){ return ["A","B","C","D","E","F"]; }
+
+  function b64urlEncode(str){
+    var b64 = btoa(unescape(encodeURIComponent(str)));
+    return b64.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  }
+  function b64urlDecode(str){
+    var b64 = str.replace(/-/g,"+").replace(/_/g,"/");
+    while (b64.length % 4) b64 += "=";
+    return decodeURIComponent(escape(atob(b64)));
+  }
+  function encodeTest(test){ return "t2." + b64urlEncode(JSON.stringify(test)); }
+  function decodeTest(code){ if (code.indexOf("t2.") !== 0) throw new Error("bad prefix"); return JSON.parse(b64urlDecode(code.slice(3))); }
+  function encodeResult(res){ return "r2." + b64urlEncode(JSON.stringify(res)); }
+  function decodeResult(code){ if (code.indexOf("r2.") !== 0) throw new Error("bad prefix"); return JSON.parse(b64urlDecode(code.slice(3))); }
+
+  /* ---------------- optional server sync (Google Apps Script backend) ---------------- */
+  function apiGet(baseUrl, action){
+    if (!baseUrl) return Promise.reject(new Error("no server configured"));
+    return fetch(baseUrl + (baseUrl.indexOf("?") === -1 ? "?" : "&") + "action=" + action)
+      .then(function(r){ return r.json(); })
+      .then(function(data){ if (!data.ok) throw new Error(data.error || "server error"); return data; });
+  }
+  function apiPost(baseUrl, body){
+    if (!baseUrl) return Promise.reject(new Error("no server configured"));
+    /* text/plain avoids a CORS preflight that Apps Script web apps don't handle */
+    return fetch(baseUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) })
+      .then(function(r){ return r.json(); })
+      .then(function(data){ if (!data.ok) throw new Error(data.error || "server error"); return data; });
+  }
+
+  function syncTestToServer(t){
+    if (!state.serverUrl) return;
+    apiPost(state.serverUrl, { action: "saveTest", test: t }).catch(function(){ toast("Saved locally — couldn't reach the server"); });
+  }
+  function syncDeleteTestFromServer(id){
+    if (!state.serverUrl) return;
+    apiPost(state.serverUrl, { action: "deleteTest", id: id }).catch(function(){});
+  }
+
+  function toast(msg){
+    var el = document.createElement("div");
+    el.className = "toast"; el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2200);
+  }
+  function copyText(text){
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ toast("Copied"); }, function(){ fallbackCopy(text); });
+    } else { fallbackCopy(text); }
+  }
+  function fallbackCopy(text){
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast("Copied"); } catch(e){ toast("Copy failed — select and copy manually"); }
+    ta.remove();
+  }
+
+  /* ---------------- app state ---------------- */
+  var app = $("#app");
+  var teacherTab = "tests";
+  var managingTestId = null;   // when set, Tests tab shows the question editor for this test
+  var questionDraft = null;    // { id, topic, errorType, type, text, options: [...], correct }
+  var openStudentPhone = null; // when set, Submissions tab shows the student detail panel
+  var studentSession = null;
+  var unlocked = sessionStorage.getItem("untUnlocked") === "1";
+
+  window.addEventListener("hashchange", render);
+  render();
+
+  function getHash(){ return location.hash.replace(/^#/, ""); }
+  function setHash(h){ location.hash = h; }
+
+  function render(){
+    var hash = getHash();
+    if (hash.indexOf("test=") === 0) renderStudent(hash.slice(5));
+    else if (hash === "teacher") renderTeacher();
+    else renderLanding();
+    window.scrollTo(0,0);
+  }
+
+  function topbarHtml(showHome){
+    return '<div class="topbar"><div class="brand"><span class="mark">✓✗</span><span class="name">UNT Error Bank</span></div>' +
+      (showHome ? '<a class="nav-link" href="#">Home</a>' : '<a class="nav-link" href="#teacher">Teacher dashboard</a>') + '</div>';
+  }
+
+  /* ================= LANDING ================= */
+  function renderLanding(){
+    app.innerHTML = '<div class="wrap narrow">' + topbarHtml(false) +
+      '<div class="landing-hero"><div style="font-size:34px;">🖊️</div>' +
+      '<h1>Find the pattern in every mistake.</h1>' +
+      '<p>A private space to run English UNT practice tests, collect results by link, and see exactly which topics are costing your students points.</p></div>' +
+      '<div class="choice-grid">' +
+        '<div class="choice"><div class="icon">🧑‍🏫</div><h3>I&rsquo;m the teacher</h3>' +
+        '<p>Create and edit tests, share links with students, and review error analysis.</p>' +
+        '<button class="btn primary" id="goTeacher">Open dashboard</button></div>' +
+        '<div class="choice"><div class="icon">🎓</div><h3>I have a test code</h3>' +
+        '<p>If your test link didn&rsquo;t open, paste the code your teacher sent you here instead.</p>' +
+        '<div class="field mb0"><textarea class="code" id="codeInput" rows="2" placeholder="t2.AbCdEf..."></textarea></div>' +
+        '<button class="btn mt12" id="goCode">Open test</button></div>' +
+      '</div></div>';
+    $("#goTeacher").onclick = function(){ setHash("teacher"); };
+    $("#goCode").onclick = function(){
+      var v = $("#codeInput").value.trim();
+      if (!v) return;
+      setHash("test=" + encodeURIComponent(v));
+    };
+  }
+
+  /* ================= STUDENT ================= */
+  function renderStudent(rawCode){
+    var code = decodeURIComponent(rawCode);
+    var test;
+    try { test = decodeTest(code); }
+    catch(e){
+      app.innerHTML = '<div class="wrap narrow">' + topbarHtml(true) +
+        '<div class="card"><h2>This test link looks broken</h2>' +
+        '<p class="muted">The code in the link couldn&rsquo;t be read. Ask your teacher to resend the link.</p>' +
+        '<a class="btn mt12" href="#">Back home</a></div></div>';
+      return;
+    }
+    if (!studentSession || studentSession.testCode !== code) {
+      var saved = null;
+      try { saved = JSON.parse(sessionStorage.getItem("untSession_" + test.id) || "null"); } catch(e){}
+      if (saved && saved.testCode === code) studentSession = saved;
+      else studentSession = {
+        testCode: code, test: test, step: "intro", name: "", phone: "",
+        answers: test.questions.map(function(q){ return QUESTION_TYPES[q.type].emptyAnswer(); }),
+        current: 0
+      };
+    }
+    if (studentSession.step === "intro") renderStudentIntro();
+    else if (studentSession.step === "quiz") renderStudentQuiz();
+    else renderStudentResult();
+  }
+
+  function persistSession(){
+    try { sessionStorage.setItem("untSession_" + studentSession.test.id, JSON.stringify(studentSession)); } catch(e){}
+  }
+
+  function renderStudentIntro(){
+    var t = studentSession.test;
+    app.innerHTML = '<div class="wrap narrow">' + topbarHtml(true) +
+      '<div class="card"><h2>' + escapeHtml(t.title || "Test") + '</h2>' +
+      '<p class="muted small">' + t.questions.length + ' questions &middot; enter your details to begin</p>' +
+      '<div class="mt16">' +
+        '<div class="field"><label>Full name</label><input type="text" id="sName" placeholder="e.g. Aigerim Bekova"></div>' +
+        '<div class="field"><label>Phone number</label><input type="tel" id="sPhone" placeholder="e.g. +7 700 000 0000"></div>' +
+      '</div>' +
+      '<button class="btn primary" id="startBtn">Start test</button></div></div>';
+    $("#startBtn").onclick = function(){
+      var name = $("#sName").value.trim(), phone = $("#sPhone").value.trim();
+      if (!name || !phone) { toast("Enter your name and phone number"); return; }
+      studentSession.name = name; studentSession.phone = phone; studentSession.step = "quiz";
+      persistSession(); render();
+    };
+  }
+
+  function renderStudentQuiz(){
+    var t = studentSession.test;
+    var qi = studentSession.current;
+    var q = t.questions[qi];
+    var L = letters();
+    var isMulti = q.type === "multiple";
+    var chosen = studentSession.answers[qi];
+
+    var dotsHtml = t.questions.map(function(_, i){
+      var ans = studentSession.answers[i];
+      var isAnswered = QUESTION_TYPES[t.questions[i].type].emptyAnswer.toString() === "function(){ return []; }"
+        ? (Array.isArray(ans) && ans.length > 0) : (ans != null);
+      var cls = "dot" + (isAnswered ? " answered" : "") + (i === qi ? " current" : "");
+      return '<div class="' + cls + '" data-jump="' + i + '">' + (i+1) + '</div>';
+    }).join("");
+
+    var optsHtml = q.options.map(function(opt, i){
+      var sel = isMulti ? chosen.indexOf(i) !== -1 : chosen === i;
+      return '<button class="option' + (sel ? " selected" : "") + '" data-opt="' + i + '">' +
+        '<span class="letter">' + L[i] + '</span><span>' + escapeHtml(opt) + '</span></button>';
+    }).join("");
+
+    var answeredCount = studentSession.answers.filter(function(a, i){
+      return t.questions[i].type === "multiple" ? a.length > 0 : a != null;
+    }).length;
+
+    app.innerHTML = '<div class="wrap narrow">' + topbarHtml(true) +
+      '<div class="exam-card">' +
+        '<div class="q-meta"><span class="q-count">QUESTION ' + (qi+1) + ' / ' + t.questions.length + '</span>' +
+        '<span class="q-topic">' + escapeHtml(q.topic || "General") + '</span></div>' +
+        '<div class="q-type-note">' + (isMulti ? "Select all correct answers" : "Select one answer") + '</div>' +
+        '<div class="q-text">' + escapeHtml(q.text) + '</div>' +
+        '<div class="options">' + optsHtml + '</div>' +
+        '<div class="dots">' + dotsHtml + '</div>' +
+        '<div class="quiz-actions">' +
+          '<button class="btn" id="prevBtn" ' + (qi===0 ? "disabled" : "") + '>&larr; Previous</button>' +
+          (qi < t.questions.length - 1
+            ? '<button class="btn primary" id="nextBtn">Next &rarr;</button>'
+            : '<button class="btn primary" id="submitBtn">Submit (' + answeredCount + '/' + t.questions.length + ' answered)</button>') +
+        '</div>' +
+      '</div></div>';
+
+    app.querySelectorAll(".option").forEach(function(btn){
+      btn.onclick = function(){
+        var i = parseInt(btn.getAttribute("data-opt"), 10);
+        if (isMulti) {
+          var arr = studentSession.answers[qi].slice();
+          var pos = arr.indexOf(i);
+          if (pos === -1) arr.push(i); else arr.splice(pos, 1);
+          studentSession.answers[qi] = arr;
+        } else {
+          studentSession.answers[qi] = i;
+        }
+        persistSession(); renderStudentQuiz();
+      };
+    });
+    app.querySelectorAll(".dot").forEach(function(d){
+      d.onclick = function(){ studentSession.current = parseInt(d.getAttribute("data-jump"),10); persistSession(); renderStudentQuiz(); };
+    });
+    var prevBtn = $("#prevBtn"); if (prevBtn) prevBtn.onclick = function(){ studentSession.current--; persistSession(); renderStudentQuiz(); };
+    var nextBtn = $("#nextBtn"); if (nextBtn) nextBtn.onclick = function(){ studentSession.current++; persistSession(); renderStudentQuiz(); };
+    var submitBtn = $("#submitBtn");
+    if (submitBtn) submitBtn.onclick = function(){
+      var unanswered = t.questions.length - answeredCount;
+      if (unanswered > 0 && !confirm(unanswered + " question(s) unanswered. Submit anyway?")) return;
+      finishQuiz();
+    };
+  }
+
+  function finishQuiz(){
+    var t = studentSession.test;
+    var details = t.questions.map(function(q, i){
+      var chosen = studentSession.answers[i];
+      var isCorrect = QUESTION_TYPES[q.type].grade(q.correct, chosen);
+      return { qIndex: i, topic: q.topic || "General", errorType: q.errorType || "", type: q.type,
+        questionText: q.text, options: q.options, correct: q.correct, chosen: chosen, isCorrect: isCorrect };
+    });
+    var score = details.filter(function(d){ return d.isCorrect; }).length;
+    var result = {
+      id: uid(), testId: t.id, testTitle: t.title || "Test",
+      name: studentSession.name, phone: studentSession.phone,
+      score: score, total: t.questions.length, timestamp: Date.now(), details: details
+    };
+    studentSession.step = "result";
+    studentSession.result = result;
+    studentSession.sendStatus = t.serverUrl ? "sending" : "none";
+    persistSession();
+    state.results.push(result); saveState(); // local convenience copy on this device
+    render();
+    if (t.serverUrl) {
+      apiPost(t.serverUrl, { action: "saveResult", result: result })
+        .then(function(){ studentSession.sendStatus = "sent"; persistSession(); if (studentSession.step === "result") renderStudentResult(); })
+        .catch(function(){ studentSession.sendStatus = "failed"; persistSession(); if (studentSession.step === "result") renderStudentResult(); });
+    }
+  }
+
+  function renderStudentResult(){
+    var r = studentSession.result;
+    var pct = Math.round((r.score / r.total) * 100);
+    var code = encodeResult(r);
+    var contact = (state.teacherContact || "").trim();
+    var shareUrl = "";
+    if (contact) {
+      var digits = contact.replace(/[^\d+]/g, "");
+      var msg = "UNT Error Bank result — " + r.name + " — " + r.testTitle + ": " + r.score + "/" + r.total + "\nCode: " + code;
+      shareUrl = "https://wa.me/" + digits.replace(/^\+/, "") + "?text=" + encodeURIComponent(msg);
+    }
+    var status = studentSession.sendStatus || "none";
+    var statusHtml = "";
+    if (status === "sending") statusHtml = '<p class="small" style="color:var(--gold);">Sending your result to your teacher…</p>';
+    else if (status === "sent") statusHtml = '<p class="small" style="color:var(--correct);">✅ Your result was sent to your teacher automatically.</p>';
+    else if (status === "failed") statusHtml = '<p class="small" style="color:var(--wrong);">Couldn&rsquo;t reach the server — please send the code below to your teacher instead.</p>';
+
+    app.innerHTML = '<div class="wrap narrow">' + topbarHtml(true) +
+      '<div class="card"><div class="score-hero">' +
+        '<div class="q-count">' + escapeHtml(r.testTitle) + '</div>' +
+        '<div class="score-num">' + r.score + ' / ' + r.total + '</div>' +
+        '<div class="score-pct">' + pct + '% correct</div>' +
+      '</div>' +
+      statusHtml +
+      (status === "sent" ? '' :
+        '<hr class="divider">' +
+        '<p class="muted small">Send your result to your teacher so it shows up in their dashboard.</p>' +
+        (shareUrl ? '<a class="btn primary" href="' + shareUrl + '" target="_blank" rel="noopener">Send via WhatsApp</a>' : '') +
+        '<div class="field mt16"><label>Or copy this code and send it yourself</label>' +
+        '<div class="code-box">' + code + '</div>' +
+        '<button class="btn small mt8" id="copyCodeBtn">Copy result code</button></div>') +
+      '</div></div>';
+    var copyBtn = $("#copyCodeBtn"); if (copyBtn) copyBtn.onclick = function(){ copyText(code); };
+  }
+
+  /* ================= TEACHER ================= */
+  function renderTeacher(){
+    if (state.pin && !unlocked) { renderLock(); return; }
+    var tabs = [["tests","Tests"], ["submissions","Submissions"], ["dashboard","Dashboard"], ["settings","Settings"]];
+    var navHtml = tabs.map(function(t){
+      return '<button class="' + (teacherTab === t[0] ? "active" : "") + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+    }).join("");
+    app.innerHTML = '<div class="wrap">' + topbarHtml(true) +
+      '<div class="dash"><div class="side-nav">' + navHtml + '</div><div id="dashContent"></div></div></div>';
+    app.querySelectorAll("[data-tab]").forEach(function(b){
+      b.onclick = function(){ teacherTab = b.getAttribute("data-tab"); managingTestId = null; questionDraft = null; openStudentPhone = null; renderTeacher(); };
+    });
+    var content = $("#dashContent");
+    if (teacherTab === "tests") content.innerHTML = testsTabHtml();
+    else if (teacherTab === "submissions") content.innerHTML = submissionsTabHtml();
+    else if (teacherTab === "dashboard") content.innerHTML = dashboardTabHtml();
+    else content.innerHTML = settingsTabHtml();
+    wireTeacherTab();
+    if (state.serverUrl && !managingTestId && !openStudentPhone &&
+        (teacherTab === "tests" || teacherTab === "submissions" || teacherTab === "dashboard")) {
+      syncFromServer(teacherTab);
+    }
+  }
+
+  function syncFromServer(forTab){
+    Promise.all([apiGet(state.serverUrl, "listTests"), apiGet(state.serverUrl, "listResults")]).then(function(res){
+      var testMap = {}; state.tests.forEach(function(t){ testMap[t.id] = t; });
+      (res[0].tests || []).forEach(function(t){ testMap[t.id] = t; });
+      state.tests = Object.keys(testMap).map(function(k){ return testMap[k]; });
+      var resMap = {}; state.results.forEach(function(r){ resMap[r.id] = r; });
+      (res[1].results || []).forEach(function(r){ resMap[r.id] = r; });
+      state.results = Object.keys(resMap).map(function(k){ return resMap[k]; });
+      saveState();
+      if (teacherTab === forTab && !managingTestId && !openStudentPhone) {
+        var c = $("#dashContent");
+        if (c) {
+          c.innerHTML = forTab === "tests" ? testsTabHtml() : forTab === "submissions" ? submissionsTabHtml() : dashboardTabHtml();
+          wireTeacherTab();
+        }
+      }
+    }).catch(function(){ /* offline or misconfigured — local data still works */ });
+  }
+
+  function renderLock(){
+    app.innerHTML = '<div class="wrap narrow">' + topbarHtml(true) +
+      '<div class="lock-screen card"><h2>Teacher dashboard</h2>' +
+      '<p class="muted small">Enter your PIN to continue on this device.</p>' +
+      '<div class="field"><input type="text" id="pinInput" placeholder="PIN"></div>' +
+      '<button class="btn primary" id="unlockBtn">Unlock</button></div></div>';
+    $("#unlockBtn").onclick = function(){
+      if ($("#pinInput").value === state.pin) { unlocked = true; sessionStorage.setItem("untUnlocked","1"); renderTeacher(); }
+      else toast("Incorrect PIN");
+    };
+  }
+
+  /* ---------- Tests tab ---------- */
+  function testsTabHtml(){
+    if (managingTestId) return questionEditorHtml(managingTestId);
+    var listHtml = state.tests.length === 0 ? '<div class="empty-note">No tests yet — create your first one below.</div>' :
+      state.tests.map(function(t){
+        return '<div class="test-item"><div class="ti-left"><div class="t">' + escapeHtml(t.title) + '</div>' +
+          '<div class="m">' + t.questions.length + ' question(s) &middot; created ' + new Date(t.createdAt).toLocaleDateString() + '</div></div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button class="btn small" data-manage="' + t.id + '">Edit questions</button>' +
+          '<button class="btn small primary" data-getlink="' + t.id + '">Get link</button>' +
+          '<button class="btn small danger" data-deltest="' + t.id + '">Delete</button></div></div>';
+      }).join("");
+    return '<div class="card"><div class="section-head"><div><h2>Your tests</h2><p class="hint">Create as many as you need — each gets its own shareable link</p></div>' +
+        '<button class="btn primary" id="newTestBtn">+ New test</button></div>' + listHtml + '</div>' +
+        '<div class="card" id="linkOutputCard" style="display:none;"></div>';
+  }
+
+  function questionEditorHtml(testId){
+    var t = state.tests.find(function(x){ return x.id === testId; });
+    if (!t) { managingTestId = null; return testsTabHtml(); }
+    var qListHtml = t.questions.length === 0 ? '<div class="empty-note">No questions yet.</div>' :
+      t.questions.map(function(q, i){
+        var optsHtml = q.options.map(function(o, oi){
+          var isCorrect = q.type === "multiple" ? q.correct.indexOf(oi) !== -1 : q.correct === oi;
+          return '<div' + (isCorrect ? ' class="ok"' : '') + '>' + letters()[oi] + '. ' + escapeHtml(o) + '</div>';
+        }).join("");
+        return '<div class="q-list-item"><div class="top"><div class="txt">Q' + (i+1) + '. ' + escapeHtml(q.text) + '</div>' +
+          '<div style="flex-shrink:0;display:flex;gap:6px;">' +
+          '<button class="btn small" data-editq="' + q.id + '">Edit</button>' +
+          '<button class="btn small danger" data-delq="' + q.id + '">Delete</button></div></div>' +
+          '<div class="tags"><span class="tag">' + escapeHtml(q.topic) + '</span>' +
+          (q.errorType ? '<span class="tag">' + escapeHtml(q.errorType) + '</span>' : '') +
+          '<span class="tag">' + QUESTION_TYPES[q.type].label + '</span></div>' +
+          '<div class="opts">' + optsHtml + '</div></div>';
+      }).join("");
+
+    var d = questionDraft || { id: null, topic: UNT_TOPICS[0], errorType: "", type: "single", text: "", options: ["",""], correct: 0 };
+    var isMulti = d.type === "multiple";
+    var optRows = d.options.map(function(o, i){
+      var checked = isMulti ? (d.correct.indexOf(i) !== -1) : (d.correct === i);
+      return '<div class="opt-row">' +
+        '<input type="' + (isMulti ? "checkbox" : "radio") + '" name="correctOpt" data-correct="' + i + '" ' + (checked ? "checked" : "") + '>' +
+        '<input type="text" data-optfield="' + i + '" value="' + escapeHtml(o) + '" placeholder="Option ' + letters()[i] + '" style="flex:1;">' +
+        (d.options.length > 2 ? '<button type="button" class="btn small danger" data-rmopt="' + i + '">✕</button>' : '') +
+        '</div>';
+    }).join("");
+    var topicOptions = UNT_TOPICS.map(function(top){ return '<option value="' + escapeHtml(top) + '"' + (top===d.topic ? " selected" : "") + '>' + escapeHtml(top) + '</option>'; }).join("");
+
+    return '<div class="back-link" id="backToTests">&larr; All tests</div>' +
+      '<div class="card"><div class="section-head"><div>' +
+        '<input type="text" id="testTitleInput" value="' + escapeHtml(t.title) + '" style="font-family:var(--serif);font-size:19px;font-weight:600;border:none;background:transparent;padding:0;">' +
+        '<p class="hint">' + t.questions.length + ' question(s)</p></div>' +
+        '<button class="btn small" id="saveTitleBtn">Save title</button></div></div>' +
+      '<div class="card">' + qListHtml + '</div>' +
+      '<div class="card"><h3>' + (d.id ? "Edit question" : "Add a question") + '</h3>' +
+        '<div class="row">' +
+          '<div class="field"><label>UNT topic</label><select id="qTopic">' + topicOptions + '</select></div>' +
+          '<div class="field"><label>Error type <span class="muted">(optional)</span></label><input type="text" id="qErrorType" value="' + escapeHtml(d.errorType) + '" placeholder="e.g. Grammar, Vocabulary"></div>' +
+          '<div class="field"><label>Question type</label><select id="qType">' +
+            '<option value="single"' + (d.type==="single"?" selected":"") + '>Single choice</option>' +
+            '<option value="multiple"' + (d.type==="multiple"?" selected":"") + '>Multiple choice</option>' +
+          '</select></div>' +
+        '</div>' +
+        '<div class="field"><label>Question text</label><textarea id="qText" rows="2">' + escapeHtml(d.text) + '</textarea></div>' +
+        '<label>Options &mdash; mark the correct answer' + (isMulti ? "(s)" : "") + '</label>' +
+        optRows +
+        '<button type="button" class="btn small" id="addOptBtn" ' + (d.options.length >= 6 ? "disabled" : "") + '>+ Add option</button>' +
+        '<div class="row mt16">' +
+          '<button class="btn primary" id="saveQBtn">' + (d.id ? "Save changes" : "Add question") + '</button>' +
+          (d.id ? '<button class="btn" id="cancelEditBtn">Cancel</button>' : '') +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ---------- Submissions tab ---------- */
+  function submissionsTabHtml(){
+    if (openStudentPhone) return studentDetailHtml(openStudentPhone);
+    var results = state.results.slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    var rowsHtml = results.length === 0 ? '<tr><td colspan="5" class="empty-note">No submissions yet. Import a result code below.</td></tr>' :
+      results.map(function(r){
+        var pct = Math.round((r.score/r.total)*100);
+        var pillClass = pct >= 70 ? "good" : (pct >= 40 ? "mid" : "bad");
+        return '<tr class="clickable" data-openphone="' + escapeHtml(r.phone) + '">' +
+          '<td>' + escapeHtml(r.name) + '</td><td>' + escapeHtml(r.phone) + '</td><td>' + escapeHtml(r.testTitle) + '</td>' +
+          '<td><span class="pill ' + pillClass + '">' + r.score + '/' + r.total + ' &middot; ' + pct + '%</span></td>' +
+          '<td class="small muted">' + new Date(r.timestamp).toLocaleDateString() + '</td></tr>';
+      }).join("");
+    return '<div class="card"><div class="section-head"><div><h2>Import a result code</h2><p class="hint">Paste one code per line</p></div></div>' +
+        '<div class="field"><textarea class="code" id="importArea" rows="3" placeholder="r2.AbCdEf..."></textarea></div>' +
+        '<button class="btn primary" id="importBtn">Import</button></div>' +
+      '<div class="card"><div class="section-head"><div><h2>Submissions</h2><p class="hint">' + results.length + ' total &middot; click a row to see that student&rsquo;s error analysis</p></div></div>' +
+        '<div class="table-wrap"><table><thead><tr><th>Student</th><th>Phone</th><th>Test</th><th>Score</th><th>Date</th></tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody></table></div></div>';
+  }
+
+  function studentDetailHtml(phone){
+    var subs = state.results.filter(function(r){ return r.phone === phone; }).sort(function(a,b){ return b.timestamp - a.timestamp; });
+    if (subs.length === 0) { openStudentPhone = null; return submissionsTabHtml(); }
+    var latest = subs[0];
+    var avgPct = Math.round(subs.reduce(function(s,r){ return s + (r.score/r.total)*100; }, 0) / subs.length);
+
+    function topicTally(list){
+      var map = {};
+      list.forEach(function(r){
+        r.details.forEach(function(d){
+          if (!map[d.topic]) map[d.topic] = { wrong: 0, testIds: {} };
+          if (!d.isCorrect) { map[d.topic].wrong++; map[d.topic].testIds[r.testId] = true; }
+        });
+      });
+      return map;
+    }
+    function tallyRows(map){
+      return Object.keys(map).map(function(topic){
+        return { topic: topic, wrong: map[topic].wrong, testCount: Object.keys(map[topic].testIds).length };
+      }).sort(function(a,b){ return b.wrong - a.wrong; });
+    }
+
+    var latestMap = topicTally([latest]);
+    var latestRows = tallyRows(latestMap);
+    var maxLatest = Math.max.apply(null, latestRows.map(function(r){ return r.wrong; }).concat([1]));
+    var latestHtml = latestRows.length === 0 ? '<p class="muted small">No mistakes on this test.</p>' :
+      latestRows.map(function(row){
+        var w = Math.round((row.wrong / maxLatest) * 100);
+        return '<div class="topic-bar-row"><div class="label">' + escapeHtml(row.topic) + '</div>' +
+          '<div class="topic-bar-track"><div class="topic-bar-fill" style="width:' + w + '%;background:var(--wrong);"></div></div>' +
+          '<div class="pct">' + row.wrong + ' mistake(s)</div></div>';
+      }).join("");
+
+    var allMap = topicTally(subs);
+    var allRows = tallyRows(allMap);
+    var maxAll = Math.max.apply(null, allRows.map(function(r){ return r.wrong; }).concat([1]));
+    var allHtml = allRows.length === 0 ? '<p class="muted small">No mistakes recorded across their submissions.</p>' :
+      allRows.map(function(row){
+        var w = Math.round((row.wrong / maxAll) * 100);
+        var flag = row.testCount >= 2 ? "🔴 " : "";
+        return '<div class="topic-bar-row"><div class="label">' + flag + escapeHtml(row.topic) + '</div>' +
+          '<div class="topic-bar-track"><div class="topic-bar-fill" style="width:' + w + '%;background:' + (row.testCount>=2 ? "var(--wrong)" : "var(--gold)") + ';"></div></div>' +
+          '<div class="pct">' + row.wrong + ' across ' + row.testCount + ' test(s)</div></div>';
+      }).join("");
+
+    var subsHtml = subs.map(function(r){
+      var pct = Math.round((r.score/r.total)*100);
+      return '<div class="flag-item"><span>' + escapeHtml(r.testTitle) + ' &middot; ' + new Date(r.timestamp).toLocaleDateString() + '</span>' +
+        '<span class="n" style="color:var(--ink);">' + r.score + '/' + r.total + ' (' + pct + '%)</span></div>';
+    }).join("");
+
+    return '<div class="back-link" id="backToSubs">&larr; All submissions</div>' +
+      '<div class="card"><h2>' + escapeHtml(latest.name) + '</h2>' +
+        '<p class="muted small">' + escapeHtml(phone) + '</p>' +
+        '<div class="row mt16">' +
+          '<div class="stat-card"><div class="num">' + latest.score + '/' + latest.total + '</div><div class="lbl">Latest score</div></div>' +
+          '<div class="stat-card"><div class="num">' + avgPct + '%</div><div class="lbl">Average across ' + subs.length + ' test(s)</div></div>' +
+        '</div></div>' +
+      '<div class="card"><h3 class="subtle-h">Error analysis &mdash; latest test</h3>' + latestHtml + '</div>' +
+      '<div class="card"><h3 class="subtle-h">Combined error analysis &mdash; all tests (🔴 = recurring across 2+ tests)</h3>' + allHtml + '</div>' +
+      '<div class="card"><h3 class="subtle-h">All submissions</h3>' + subsHtml + '</div>';
+  }
+
+  /* ---------- Dashboard tab ---------- */
+  function dashboardTabHtml(){
+    var results = state.results;
+    if (results.length === 0) return '<div class="card"><div class="empty-note">Import at least one submission to see class-wide analytics.</div></div>';
+    var uniquePhones = {}; results.forEach(function(r){ uniquePhones[r.phone] = true; });
+    var totalStudents = Object.keys(uniquePhones).length;
+    var avgPct = Math.round(results.reduce(function(s,r){ return s + (r.score/r.total)*100; }, 0) / results.length);
+
+    var topicMap = {};
+    results.forEach(function(r){
+      r.details.forEach(function(d){
+        if (!topicMap[d.topic]) topicMap[d.topic] = { wrong: 0, testIds: {} };
+        if (!d.isCorrect) { topicMap[d.topic].wrong++; topicMap[d.topic].testIds[r.testId] = true; }
+      });
+    });
+    var topicRows = Object.keys(topicMap).map(function(topic){
+      return { topic: topic, wrong: topicMap[topic].wrong, testCount: Object.keys(topicMap[topic].testIds).length };
+    }).sort(function(a,b){ return b.wrong - a.wrong; });
+    var mostCommon = topicRows.length ? topicRows[0].topic : "—";
+    var maxWrong = Math.max.apply(null, topicRows.map(function(r){ return r.wrong; }).concat([1]));
+
+    var chartHtml = topicRows.map(function(row){
+      var w = Math.round((row.wrong / maxWrong) * 100);
+      return '<div class="topic-bar-row"><div class="label">' + escapeHtml(row.topic) + '</div>' +
+        '<div class="topic-bar-track"><div class="topic-bar-fill" style="width:' + w + '%;background:var(--wrong);"></div></div>' +
+        '<div class="pct">' + row.wrong + ' mistake(s)</div></div>';
+    }).join("");
+
+    var systemic = topicRows.filter(function(r){ return r.testCount >= 2; });
+    var systemicHtml = systemic.length === 0 ? '<p class="muted small">No topic has shown up as a mistake across multiple tests yet.</p>' :
+      systemic.map(function(row){
+        return '<div class="flag-item">🔴 ' + escapeHtml(row.topic) + '<span class="n">' + row.wrong + ' mistakes across ' + row.testCount + ' test(s)</span></div>';
+      }).join("");
+
+    return '<div class="stat-grid">' +
+        '<div class="stat-card"><div class="num">' + totalStudents + '</div><div class="lbl">Total students</div></div>' +
+        '<div class="stat-card"><div class="num">' + results.length + '</div><div class="lbl">Tests completed</div></div>' +
+        '<div class="stat-card"><div class="num">' + avgPct + '%</div><div class="lbl">Average score</div></div>' +
+        '<div class="stat-card"><div class="num" style="font-size:16px;">' + escapeHtml(mostCommon) + '</div><div class="lbl">Most common class error</div></div>' +
+      '</div>' +
+      '<div class="card mt16"><h3 class="subtle-h">Mistakes by topic &mdash; whole class</h3>' + chartHtml + '</div>' +
+      '<div class="card"><h3 class="subtle-h">Systematic errors (topics recurring across 2+ tests)</h3>' + systemicHtml + '</div>';
+  }
+
+  /* ---------- Settings tab ---------- */
+  function settingsTabHtml(){
+    return '<div class="card"><h2>Dashboard lock</h2>' +
+        '<p class="hint">Optional PIN so this dashboard doesn&rsquo;t open right away on a shared device. This is a light deterrent, not real security.</p>' +
+        '<div class="row"><div class="field"><label>PIN</label><input type="text" id="pinSet" value="' + escapeHtml(state.pin || "") + '"></div></div>' +
+        '<div class="row">' +
+        '<button class="btn primary" id="savePinBtn">Save PIN</button>' +
+        '<button class="btn" id="genPinBtn">Generate a PIN for me</button>' +
+        (state.pin ? '<button class="btn danger" id="clearPinBtn">Remove PIN</button>' : '') + '</div></div>' +
+      '<div class="card"><h2>Server (optional — for automatic sync)</h2>' +
+        '<p class="hint">Paste your Google Apps Script Web App URL here to have tests and student results sync automatically, without copying codes by hand. Leave blank to keep using local storage + codes.</p>' +
+        '<div class="row"><div class="field"><label>Server URL</label><input type="text" id="serverUrlSet" value="' + escapeHtml(state.serverUrl || "") + '" placeholder="https://script.google.com/macros/s/.../exec"></div></div>' +
+        '<div class="row"><button class="btn primary" id="saveServerBtn">Save</button>' +
+        '<button class="btn" id="testServerBtn">Test connection</button></div>' +
+        '<p class="small muted mt8">Note: this only works when this page is hosted outside claude.ai (e.g. GitHub Pages, Netlify) — the published claude.ai link cannot call external servers.</p></div>' +
+      '<div class="card"><h2>Your contact for student results</h2>' +
+        '<p class="hint">If you add your WhatsApp number, students get a one-tap &ldquo;Send via WhatsApp&rdquo; button after their test, instead of copying a code manually.</p>' +
+        '<div class="row"><div class="field"><label>WhatsApp number</label><input type="text" id="contactSet" value="' + escapeHtml(state.teacherContact || "") + '" placeholder="+7 700 000 0000"></div></div>' +
+        '<button class="btn primary" id="saveContactBtn">Save</button></div>' +
+      '<div class="card"><h2>Data on this device</h2>' +
+        '<p class="hint">Tests and imported submissions are stored only in this browser. Back them up if you switch devices.</p>' +
+        '<div class="row"><button class="btn" id="exportBtn">Export backup (JSON)</button>' +
+        '<button class="btn danger" id="wipeBtn">Clear all data on this device</button></div></div>';
+  }
+
+  /* ---------- wiring ---------- */
+  function wireTeacherTab(){
+    if (managingTestId && !questionDraft) {
+      questionDraft = { id: null, topic: UNT_TOPICS[0], errorType: "", type: "single", text: "", options: ["",""], correct: 0 };
+    }
+    /* --- Tests tab: list view --- */
+    var newTestBtn = $("#newTestBtn");
+    if (newTestBtn) newTestBtn.onclick = function(){
+      var t = { id: uid(), title: "Untitled test", createdAt: Date.now(), questions: [] };
+      state.tests.push(t); saveState(); syncTestToServer(t); managingTestId = t.id; questionDraft = null; renderTeacher();
+    };
+    app.querySelectorAll("[data-manage]").forEach(function(b){
+      b.onclick = function(){ managingTestId = b.getAttribute("data-manage"); questionDraft = null; renderTeacher(); };
+    });
+    app.querySelectorAll("[data-deltest]").forEach(function(b){
+      b.onclick = function(){
+        if (!confirm("Delete this test? Existing links and results referencing it will no longer decode.")) return;
+        var delId = b.getAttribute("data-deltest");
+        state.tests = state.tests.filter(function(t){ return t.id !== delId; });
+        saveState(); syncDeleteTestFromServer(delId); renderTeacher();
+      };
+    });
+    app.querySelectorAll("[data-getlink]").forEach(function(b){
+      b.onclick = function(){
+        var t = state.tests.find(function(x){ return x.id === b.getAttribute("data-getlink"); });
+        if (!t || t.questions.length === 0) { toast("Add at least one question to this test first"); return; }
+        var payload = { id: t.id, title: t.title, serverUrl: state.serverUrl || "", questions: t.questions.map(function(q){
+          return { topic: q.topic, errorType: q.errorType, type: q.type, text: q.text, options: q.options, correct: q.correct };
+        })};
+        var code = encodeTest(payload);
+        var link = location.origin + location.pathname + "#test=" + code;
+        var card = $("#linkOutputCard");
+        card.style.display = "block";
+        card.innerHTML = '<h3>Link for &ldquo;' + escapeHtml(t.title) + '&rdquo;</h3>' +
+          '<div class="field mt12"><label>Share this link</label><div class="code-box">' + escapeHtml(link) + '</div>' +
+          '<button class="btn primary small mt8" id="copyLinkBtn2">Copy link</button></div>' +
+          '<div class="field mt16"><label>Backup code</label><div class="code-box">' + code + '</div>' +
+          '<button class="btn small mt8" id="copyCodeBtn2">Copy code</button></div>';
+        $("#copyLinkBtn2").onclick = function(){ copyText(link); };
+        $("#copyCodeBtn2").onclick = function(){ copyText(code); };
+        card.scrollIntoView({behavior:"smooth"});
+      };
+    });
+
+    /* --- Tests tab: question editor view --- */
+    var backToTests = $("#backToTests");
+    if (backToTests) backToTests.onclick = function(){ managingTestId = null; questionDraft = null; renderTeacher(); };
+    var saveTitleBtn = $("#saveTitleBtn");
+    if (saveTitleBtn) saveTitleBtn.onclick = function(){
+      var t = state.tests.find(function(x){ return x.id === managingTestId; });
+      t.title = $("#testTitleInput").value.trim() || "Untitled test";
+      saveState(); syncTestToServer(t); toast("Saved"); renderTeacher();
+    };
+    app.querySelectorAll("[data-editq]").forEach(function(b){
+      b.onclick = function(){
+        var t = state.tests.find(function(x){ return x.id === managingTestId; });
+        var q = t.questions.find(function(x){ return x.id === b.getAttribute("data-editq"); });
+        questionDraft = JSON.parse(JSON.stringify(q));
+        renderTeacher();
+      };
+    });
+    app.querySelectorAll("[data-delq]").forEach(function(b){
+      b.onclick = function(){
+        if (!confirm("Delete this question?")) return;
+        var t = state.tests.find(function(x){ return x.id === managingTestId; });
+        t.questions = t.questions.filter(function(x){ return x.id !== b.getAttribute("data-delq"); });
+        saveState(); syncTestToServer(t); renderTeacher();
+      };
+    });
+    var qTypeSel = $("#qType");
+    if (qTypeSel) qTypeSel.onchange = function(){
+      syncDraftFromForm();
+      questionDraft.type = qTypeSel.value;
+      questionDraft.correct = questionDraft.type === "multiple" ? [] : 0;
+      renderTeacher();
+    };
+    var addOptBtn = $("#addOptBtn");
+    if (addOptBtn) addOptBtn.onclick = function(){
+      syncDraftFromForm();
+      if (questionDraft.options.length < 6) questionDraft.options.push("");
+      renderTeacher();
+    };
+    app.querySelectorAll("[data-rmopt]").forEach(function(b){
+      b.onclick = function(){
+        syncDraftFromForm();
+        var i = parseInt(b.getAttribute("data-rmopt"), 10);
+        questionDraft.options.splice(i, 1);
+        if (questionDraft.type === "multiple") {
+          questionDraft.correct = questionDraft.correct.filter(function(c){ return c !== i; }).map(function(c){ return c > i ? c-1 : c; });
+        } else if (questionDraft.correct === i) questionDraft.correct = 0;
+        else if (questionDraft.correct > i) questionDraft.correct--;
+        renderTeacher();
+      };
+    });
+    var saveQBtn = $("#saveQBtn");
+    if (saveQBtn) saveQBtn.onclick = function(){
+      syncDraftFromForm();
+      var topic = $("#qTopic").value;
+      var errorType = $("#qErrorType").value.trim();
+      var text = $("#qText").value.trim();
+      if (!text) { toast("Enter the question text"); return; }
+      if (questionDraft.options.some(function(o){ return !o.trim(); })) { toast("Fill in every option, or remove empty ones"); return; }
+      if (questionDraft.type === "single" && questionDraft.correct == null) { toast("Mark the correct answer"); return; }
+      if (questionDraft.type === "multiple" && questionDraft.correct.length === 0) { toast("Mark at least one correct answer"); return; }
+      var t = state.tests.find(function(x){ return x.id === managingTestId; });
+      var finalQ = { id: questionDraft.id || uid(), topic: topic, errorType: errorType, type: questionDraft.type,
+        text: text, options: questionDraft.options, correct: questionDraft.correct };
+      if (questionDraft.id) {
+        var idx = t.questions.findIndex(function(x){ return x.id === questionDraft.id; });
+        t.questions[idx] = finalQ;
+      } else t.questions.push(finalQ);
+      questionDraft = null; saveState(); syncTestToServer(t); renderTeacher();
+    };
+    var cancelEditBtn = $("#cancelEditBtn");
+    if (cancelEditBtn) cancelEditBtn.onclick = function(){ questionDraft = null; renderTeacher(); };
+
+    /* --- Submissions tab --- */
+    var importBtn = $("#importBtn");
+    if (importBtn) importBtn.onclick = function(){
+      var lines = $("#importArea").value.split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+      var added = 0, failed = 0;
+      lines.forEach(function(line){
+        try {
+          var r = decodeResult(line);
+          if (!state.results.some(function(ex){ return ex.id === r.id; })) { state.results.push(r); added++; }
+        } catch(e){ failed++; }
+      });
+      saveState();
+      toast(added + " imported" + (failed ? ", " + failed + " failed" : ""));
+      renderTeacher();
+    };
+    app.querySelectorAll("[data-openphone]").forEach(function(row){
+      row.onclick = function(){ openStudentPhone = row.getAttribute("data-openphone"); renderTeacher(); };
+    });
+    var backToSubs = $("#backToSubs");
+    if (backToSubs) backToSubs.onclick = function(){ openStudentPhone = null; renderTeacher(); };
+
+    /* --- Settings tab --- */
+    var savePinBtn = $("#savePinBtn");
+    if (savePinBtn) savePinBtn.onclick = function(){ state.pin = $("#pinSet").value.trim() || null; saveState(); toast("Saved"); renderTeacher(); };
+    var genPinBtn = $("#genPinBtn");
+    if (genPinBtn) genPinBtn.onclick = function(){
+      var pin = String(Math.floor(1000 + Math.random() * 9000));
+      state.pin = pin; saveState();
+      unlocked = true; sessionStorage.setItem("untUnlocked", "1");
+      toast("Your new PIN is " + pin + " — write it down");
+      renderTeacher();
+    };
+    var clearPinBtn = $("#clearPinBtn");
+    if (clearPinBtn) clearPinBtn.onclick = function(){ state.pin = null; saveState(); renderTeacher(); };
+    var saveServerBtn = $("#saveServerBtn");
+    if (saveServerBtn) saveServerBtn.onclick = function(){
+      state.serverUrl = $("#serverUrlSet").value.trim(); saveState(); toast("Saved"); renderTeacher();
+    };
+    var testServerBtn = $("#testServerBtn");
+    if (testServerBtn) testServerBtn.onclick = function(){
+      var url = $("#serverUrlSet").value.trim();
+      if (!url) { toast("Enter a server URL first"); return; }
+      apiGet(url, "listTests").then(function(){ toast("Connected ✓"); }).catch(function(e){ toast("Couldn't connect: " + e.message); });
+    };
+    var saveContactBtn = $("#saveContactBtn");
+    if (saveContactBtn) saveContactBtn.onclick = function(){ state.teacherContact = $("#contactSet").value.trim(); saveState(); toast("Saved"); };
+    var exportBtn = $("#exportBtn");
+    if (exportBtn) exportBtn.onclick = function(){
+      var blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a"); a.href = url; a.download = "unt-error-bank-backup.json";
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    };
+    var wipeBtn = $("#wipeBtn");
+    if (wipeBtn) wipeBtn.onclick = function(){
+      if (!confirm("This clears all tests and submissions on this device. Continue?")) return;
+      state = { tests: sampleTests(), results: [], pin: null, teacherContact: "" };
+      saveState(); toast("Cleared"); renderTeacher();
+    };
+
+    /* --- keep the in-memory draft synced with whatever is typed, in case a click elsewhere triggers a re-render --- */
+    if (managingTestId) {
+      var topicSel = $("#qTopic"); if (topicSel) topicSel.onchange = function(){ questionDraft.topic = topicSel.value; };
+      var errTypeInput = $("#qErrorType"); if (errTypeInput) errTypeInput.oninput = function(){ questionDraft.errorType = errTypeInput.value; };
+      var textInput = $("#qText"); if (textInput) textInput.oninput = function(){ questionDraft.text = textInput.value; };
+      app.querySelectorAll("[data-optfield]").forEach(function(el){
+        el.oninput = function(){ questionDraft.options[parseInt(el.getAttribute("data-optfield"),10)] = el.value; };
+      });
+      app.querySelectorAll("[data-correct]").forEach(function(el){ el.onchange = function(){ syncDraftFromForm(); }; });
+    }
+  }
+
+  /* keep in-memory draft synced with whatever is currently typed before a re-render */
+  function syncDraftFromForm(){
+    if (!questionDraft) return;
+    var textEls = app.querySelectorAll("[data-optfield]");
+    textEls.forEach(function(el){
+      var i = parseInt(el.getAttribute("data-optfield"), 10);
+      questionDraft.options[i] = el.value;
+    });
+    if (questionDraft.type === "multiple") {
+      var checks = app.querySelectorAll('[data-correct]');
+      var arr = [];
+      checks.forEach(function(c){ if (c.checked) arr.push(parseInt(c.getAttribute("data-correct"),10)); });
+      questionDraft.correct = arr;
+    } else {
+      var radios = app.querySelectorAll('[data-correct]');
+      radios.forEach(function(r){ if (r.checked) questionDraft.correct = parseInt(r.getAttribute("data-correct"),10); });
+    }
+  }
+
+})();
+</script>
+</body>
+</html>
