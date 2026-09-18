@@ -1,2 +1,2 @@
 # UNT-error-
-platform used to test and track students progree in studying
+platform desgned to test and track students progres in studying for UNT
